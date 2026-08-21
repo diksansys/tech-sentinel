@@ -79,16 +79,21 @@ export const ArticleItem: React.FC<ArticleItemProps> = ({
     );
   };
 
-  const getDomain = (urlString: string) => {
+  const getDisplayUrl = (urlString: string) => {
     try {
       const parsed = new URL(urlString);
-      return parsed.hostname.replace(/^www\./, '');
+      const host = parsed.hostname.replace(/^www\./, '');
+      const path = parsed.pathname.length > 1 ? parsed.pathname : '';
+      if (path.length > 25) {
+        return `${host}${path.slice(0, 22)}...`;
+      }
+      return `${host}${path}`;
     } catch {
-      return article.source || 'web';
+      return article.source || 'Direct Link';
     }
   };
 
-  const domain = getDomain(article.url);
+  const displayUrl = getDisplayUrl(article.url);
 
   return (
     <article
@@ -102,19 +107,34 @@ export const ArticleItem: React.FC<ArticleItemProps> = ({
       <div className="flex-1 min-w-0">
         {/* Title and Action Link */}
         <div className="flex justify-between items-start gap-3">
-          <h2 className="font-bold text-base sm:text-lg leading-tight mb-1 text-[#222222]">
-            <a
-              href={article.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-[#FF6600] transition-colors inline-flex items-center gap-1.5"
-            >
-              <span>{article.title}</span>
-            </a>
-            <span className="text-xs font-normal text-gray-400 font-mono ml-2">
-              ({domain})
-            </span>
-          </h2>
+          <div className="flex-1">
+            <h2 className="font-bold text-base sm:text-lg leading-tight mb-1 text-[#222222]">
+              <a
+                href={article.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-[#FF6600] transition-colors inline-flex items-center gap-1.5 group"
+                title={`Open direct article: ${article.url}`}
+              >
+                <span>{article.title}</span>
+                <ExternalLink className="w-3.5 h-3.5 opacity-40 group-hover:opacity-100 text-[#FF6600] shrink-0" />
+              </a>
+            </h2>
+
+            {/* Exact Direct URL deep-link tag */}
+            <div className="flex items-center gap-2 mb-1.5">
+              <a
+                href={article.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-[11px] font-mono text-gray-500 hover:text-[#FF6600] bg-[#F6F6EF] px-2 py-0.5 border border-[#E0E0D0] hover:border-[#FF6600] transition-colors"
+                title={`Exact link: ${article.url}`}
+              >
+                <span className="text-gray-400">🔗</span>
+                <span className="truncate max-w-[280px] sm:max-w-md">{displayUrl}</span>
+              </a>
+            </div>
+          </div>
 
           <div className="flex items-center gap-2 shrink-0 pt-0.5">
             {/* Bookmark */}
@@ -132,8 +152,8 @@ export const ArticleItem: React.FC<ArticleItemProps> = ({
               href={article.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[#828282] hover:text-[#FF6600] transition-colors"
-              title="Open source article"
+              className="text-[#828282] hover:text-[#FF6600] transition-colors p-1"
+              title={`Read source at ${article.url}`}
             >
               <ExternalLink className="w-4 h-4" />
             </a>
@@ -157,7 +177,7 @@ export const ArticleItem: React.FC<ArticleItemProps> = ({
         {/* Key Signals expandable */}
         {article.keyPoints && article.keyPoints.length > 0 && showDetails && (
           <div className="mt-2.5 p-3 bg-[#FAFAFA] border border-[#E0E0D0] text-xs">
-            <div className="font-bold text-gray-700 uppercase text-[10px] mb-1">Key Signals:</div>
+            <div className="font-bold text-gray-700 uppercase text-[10px] mb-1">Key Technical Signals:</div>
             <ul className="space-y-1 text-gray-600 list-disc list-inside">
               {article.keyPoints.map((point, pIdx) => (
                 <li key={pIdx}>{point}</li>
@@ -180,14 +200,24 @@ export const ArticleItem: React.FC<ArticleItemProps> = ({
             )}
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
+            <a
+              href={article.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[11px] uppercase font-bold text-[#FF6600] hover:underline flex items-center gap-1"
+            >
+              <span>Read Full Article</span>
+              <ExternalLink className="w-3 h-3" />
+            </a>
+
             {article.keyPoints && article.keyPoints.length > 0 && (
               <button
                 type="button"
                 onClick={() => setShowDetails(!showDetails)}
                 className="text-[11px] uppercase font-bold text-gray-500 hover:text-black flex items-center gap-0.5 cursor-pointer"
               >
-                <span>{showDetails ? 'Hide' : 'Details'}</span>
+                <span>{showDetails ? 'Hide Details' : 'Details'}</span>
                 {showDetails ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
               </button>
             )}

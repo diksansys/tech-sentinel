@@ -16,6 +16,8 @@ export default function App() {
   const [isCached, setIsCached] = useState<boolean>(false);
   const [cacheTimestamp, setCacheTimestamp] = useState<number>(0);
   const [sourcesCount, setSourcesCount] = useState<number>(0);
+  const [liveGrounded, setLiveGrounded] = useState<boolean>(false);
+  const [searchQueries, setSearchQueries] = useState<string[]>([]);
   const [executiveSummary, setExecutiveSummary] = useState<NewsResponse['executiveSummary']>();
 
   // Local state persistence for bookmarks
@@ -68,6 +70,8 @@ export default function App() {
       setIsCached(data.cached);
       setCacheTimestamp(data.cacheTimestamp || Date.now());
       setSourcesCount(data.sourcesCount || data.articles.length);
+      setLiveGrounded(!!data.liveGrounded);
+      setSearchQueries(data.searchQueries || []);
       setExecutiveSummary(data.executiveSummary);
     } catch (err: any) {
       console.error('Error fetching news:', err);
@@ -129,6 +133,7 @@ export default function App() {
         onRefresh={handleRefresh}
         isCached={isCached}
         cacheTimestamp={cacheTimestamp}
+        liveGrounded={liveGrounded}
         bookmarkedCount={bookmarkedIds.length}
         showBookmarksOnly={showBookmarksOnly}
         onToggleBookmarks={() => setShowBookmarksOnly(!showBookmarksOnly)}
@@ -153,6 +158,8 @@ export default function App() {
             articles={articles}
             executiveSummary={executiveSummary}
             sourcesCount={sourcesCount}
+            liveGrounded={liveGrounded}
+            searchQueries={searchQueries}
           />
         )}
 

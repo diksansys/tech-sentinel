@@ -9,6 +9,7 @@ interface HeaderProps {
   onRefresh: () => void;
   isCached: boolean;
   cacheTimestamp: number;
+  liveGrounded?: boolean;
   bookmarkedCount: number;
   showBookmarksOnly: boolean;
   onToggleBookmarks: () => void;
@@ -23,6 +24,7 @@ export const Header: React.FC<HeaderProps> = ({
   onRefresh,
   isCached,
   cacheTimestamp,
+  liveGrounded,
   bookmarkedCount,
   showBookmarksOnly,
   onToggleBookmarks,
@@ -30,9 +32,9 @@ export const Header: React.FC<HeaderProps> = ({
   onToggleCompact,
 }) => {
   const getCacheAgeString = (): string => {
-    if (!cacheTimestamp) return 'Just synced';
+    if (!cacheTimestamp) return 'Live Fresh';
     const diffSec = Math.floor((Date.now() - cacheTimestamp) / 1000);
-    if (diffSec < 60) return 'Just now';
+    if (diffSec < 45) return 'Just synced';
     const diffMin = Math.floor(diffSec / 60);
     if (diffMin < 60) return `${diffMin}m ago`;
     return `${Math.floor(diffMin / 60)}h ago`;
@@ -56,14 +58,14 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
           <h1 className="font-bold text-sm tracking-tight uppercase text-black flex items-center">
             <span>Tech Sentinel</span>
-            <span className="font-normal opacity-70 ml-1.5 hidden sm:inline">| Latest Insights</span>
+            <span className="font-normal opacity-70 ml-1.5 hidden sm:inline">| Live Tech Wire</span>
           </h1>
         </div>
 
-        {/* Mobile Cache indicator */}
+        {/* Mobile Live indicator */}
         <div className="md:hidden flex items-center gap-1.5 bg-black/10 px-2 py-0.5 text-[10px] font-bold uppercase text-black">
-          <div className={`w-1.5 h-1.5 rounded-full ${isCached ? 'bg-amber-400' : 'bg-green-500'}`} />
-          <span>{isCached ? getCacheAgeString() : 'Live'}</span>
+          <div className={`w-2 h-2 rounded-full ${isCached ? 'bg-amber-400' : 'bg-green-600 animate-pulse'}`} />
+          <span>{isCached ? `Cache (${getCacheAgeString()})` : 'Live RAG'}</span>
         </div>
       </div>
 
@@ -93,10 +95,10 @@ export const Header: React.FC<HeaderProps> = ({
 
       {/* Right Controls */}
       <div className="flex items-center gap-2 text-xs font-bold uppercase justify-end">
-        {/* Desktop Cache indicator */}
+        {/* Desktop Live RAG indicator */}
         <div className="hidden lg:flex items-center gap-1.5 bg-black/10 px-2.5 py-1 text-[10px] text-black">
-          <div className={`w-2 h-2 rounded-full ${isCached ? 'bg-amber-300' : 'bg-green-500'}`} />
-          <span>{isCached ? `Cache: ${getCacheAgeString()}` : 'Live RAG'}</span>
+          <div className={`w-2 h-2 rounded-full ${isCached ? 'bg-amber-300' : 'bg-green-500 animate-pulse'}`} />
+          <span>{isCached ? `Cached: ${getCacheAgeString()}` : 'Live Web Grounded'}</span>
         </div>
 
         {/* Sync Button */}
@@ -105,9 +107,10 @@ export const Header: React.FC<HeaderProps> = ({
           onClick={onRefresh}
           disabled={isFetching}
           className="bg-black hover:bg-[#222222] text-white px-3 py-1 text-xs font-bold uppercase transition-colors disabled:opacity-50 flex items-center gap-1 cursor-pointer"
+          title="Force refresh live web grounding"
         >
           <RefreshCw className={`w-3 h-3 text-[#FF6600] ${isFetching ? 'animate-spin' : ''}`} />
-          <span>{isFetching ? 'Syncing' : 'Sync'}</span>
+          <span>{isFetching ? 'Syncing...' : 'Sync Live'}</span>
         </button>
 
         {/* Bookmarks Toggle */}

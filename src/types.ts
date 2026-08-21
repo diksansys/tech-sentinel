@@ -22,6 +22,9 @@ export interface NewsResponse {
   cached: boolean;
   cacheTimestamp: number;
   sourcesCount: number;
+  liveGrounded?: boolean;
+  searchQueries?: string[];
+  lastSyncedIso?: string;
   executiveSummary?: {
     securityHighlight: string;
     aiHighlight: string;
