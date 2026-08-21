@@ -1,0 +1,8 @@
+{
+  "name": "Tech Digest",
+  "description": "Minimalist tech newsletter aggregating latest vulnerability reports, AI updates, and software engineering news powered by real-time search grounding.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
